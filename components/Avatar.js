@@ -2,8 +2,9 @@ import { useEffect, useState } from "react";
 import supabase from "../lib/supabase/client";
 
 import Image from 'next/image'
+import {Avatar, Button, Container, Input, Stack} from "@chakra-ui/react";
 
-export default function Avatar({ url, size, onUpload }) {
+export default function AvatarInput({ url, size, onUpload }) {
   const [avatarUrl, setAvatarUrl] = useState(null);
   const [uploading, setUploading] = useState(false);
 
@@ -39,13 +40,10 @@ export default function Avatar({ url, size, onUpload }) {
 
       let { error: uploadError } = await supabase.storage.from("avatars").upload(filePath, file);
 
-      if (uploadError) {
-        throw uploadError;
-      }
+      if (uploadError) throw uploadError;
 
       onUpload(filePath);
     } catch (error) {
-      console.log("error:");
       alert(error.message);
     } finally {
       setUploading(false);
@@ -53,24 +51,20 @@ export default function Avatar({ url, size, onUpload }) {
   }
 
   return (
-    <div>
+    <Stack justify="center" align="center" textAlign="center" p="4" mb="4">
       {avatarUrl ? (
-        <Image
+        <Avatar
           src={avatarUrl}
-          alt="Avatar"
-          className="avatar image"
-          style={{ height: size, width: size }}
-          height={size}
-          width={size}
+          size="2xl"
         />
       ) : (
-        <div className="avatar no-image" style={{ height: size, width: size }} />
+        <Avatar size='2xl' name={"Not Found"} />
       )}
       <div style={{ width: size }}>
-        <label className="button primary block" htmlFor="single">
+        <Button as="label" htmlFor="single" colorScheme="teal">
           {uploading ? "Uploading ..." : "Upload"}
-        </label>
-        <input
+        </Button>
+        <Input
           style={{
             visibility: "hidden",
             position: "absolute",
@@ -82,6 +76,6 @@ export default function Avatar({ url, size, onUpload }) {
           disabled={uploading}
         />
       </div>
-    </div>
+    </Stack>
   );
 }
